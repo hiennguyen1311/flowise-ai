@@ -267,9 +267,10 @@ export const getEndingNodes = (
                 endingNodeData &&
                 endingNodeData.category !== 'Chains' &&
                 endingNodeData.category !== 'Agents' &&
-                endingNodeData.category !== 'Engine'
+                endingNodeData.category !== 'Engine' &&
+                endingNodeData.category !== 'Multi Agents'
             ) {
-                error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent`)
+                error = new InternalFlowiseError(StatusCodes.INTERNAL_SERVER_ERROR, `Ending node must be either a Chain or Agent or Engine`)
                 continue
             }
         }
@@ -443,7 +444,8 @@ export const buildFlow = async (
     cachePool?: CachePool,
     isUpsert?: boolean,
     stopNodeId?: string,
-    uploads?: IFileUpload[]
+    uploads?: IFileUpload[],
+    baseURL?: string
 ) => {
     const flowNodes = cloneDeep(reactFlowNodes)
 
@@ -496,7 +498,8 @@ export const buildFlow = async (
                     databaseEntities,
                     cachePool,
                     dynamicVariables,
-                    uploads
+                    uploads,
+                    baseURL
                 })
                 if (indexResult) upsertHistory['result'] = indexResult
                 logger.debug(`[server]: Finished upserting ${reactFlowNode.data.label} (${reactFlowNode.data.id})`)
@@ -520,7 +523,8 @@ export const buildFlow = async (
                     cachePool,
                     isUpsert,
                     dynamicVariables,
-                    uploads
+                    uploads,
+                    baseURL
                 })
 
                 // Save dynamic variables
